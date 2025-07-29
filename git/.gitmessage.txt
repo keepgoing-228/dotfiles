@@ -1,0 +1,4 @@
+Subject line (Simplify ... / Refactor ... for readability / Update getting started documentation / Remove ... method / Release version 1.0.0)
+
+Multi-line description of commit,
+feel free to be detailed.

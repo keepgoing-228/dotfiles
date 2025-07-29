@@ -1,0 +1,11 @@
+[user]
+	name = keepgoing-228
+	email = keepdling@gmail.com
+[credential]
+	helper = store
+[commit]
+	template = /home/tim/.gitmessage.txt
+[core]
+	editor = vim
+[init]
+    defaultBranch = main
