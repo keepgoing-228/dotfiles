@@ -38,6 +38,14 @@ else
     echo "[✓] pwp already installed."
 fi
 
+# install mise
+if [ ! -d "$HOME/.mise" ]; then
+    echo "[+] Installing mise..."
+    curl https://mise.run | sh
+else
+    echo "[✓] mise already installed."
+fi
+
 # stow link dotfiles
 for folder in $(echo $DOT_FOLDERS | sed "s/,/ /g"); do
     echo "[+] Folder :: $folder"

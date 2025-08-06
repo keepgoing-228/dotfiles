@@ -119,5 +119,4 @@ bindkey '\e' backward-kill-line
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # mise
-. "$HOME/.local/bin/env"
 eval "$(/home/tim/.local/bin/mise activate zsh)"
