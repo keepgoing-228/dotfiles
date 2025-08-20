@@ -120,3 +120,6 @@ bindkey '\e' backward-kill-line
 
 # mise
 eval "$(/home/tim/.local/bin/mise activate zsh)"
+
+# cursor
+# export PATH="$HOME/.local/bin:$PATH"
