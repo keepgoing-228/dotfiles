@@ -38,6 +38,9 @@ else
     echo "[✓] pwp already installed."
 fi
 
+# Tmux Plugin Manger
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
 # install mise
 if [ ! -d "$HOME/.mise" ]; then
     echo "[+] Installing mise..."
