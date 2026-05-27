@@ -134,10 +134,10 @@ export NVM_DIR="$HOME/.nvm"
 
 
 # opencode
-export PATH=/home/tim/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"
 
 # bun completions
-[ -s "/home/tim/.bun/_bun" ] && source "/home/tim/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
