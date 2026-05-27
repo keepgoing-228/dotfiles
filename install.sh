@@ -71,6 +71,18 @@ fi
 # stow link dotfiles
 for folder in $(echo $DOT_FOLDERS | sed "s/,/ /g"); do
     echo "[+] Folder :: $folder"
+
+    # Back up existing real files that would conflict with stow (skip symlinks)
+    while IFS= read -r src; do
+        rel="${src#$SCRIPT_DIR/$folder/}"
+        target="$HOME/$rel"
+        if [ -e "$target" ] && [ ! -L "$target" ]; then
+            backup="${target}.backup.$(date +%Y%m%d%H%M%S)"
+            echo "[!] Backing up $target -> $backup"
+            mv "$target" "$backup"
+        fi
+    done < <(find "$SCRIPT_DIR/$folder" -type f ! -name 'README.md' ! -name 'LICENSE')
+
     stow --ignore=README.md --ignore=LICENSE \
         -t $HOME -D $folder
     stow -v -t $HOME $folder
