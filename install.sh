@@ -4,6 +4,25 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 DOT_FOLDERS="zsh,p10k,tmux,git"
 
+# install stow
+if ! command -v stow >/dev/null 2>&1; then
+    echo "[+] Installing stow..."
+    if [ "$(uname)" = "Darwin" ]; then
+        brew install stow
+    elif command -v apt-get >/dev/null 2>&1; then
+        sudo apt-get update && sudo apt-get install -y stow
+    elif command -v dnf >/dev/null 2>&1; then
+        sudo dnf install -y stow
+    elif command -v pacman >/dev/null 2>&1; then
+        sudo pacman -S --noconfirm stow
+    else
+        echo "[!] No supported package manager found. Please install stow manually."
+        exit 1
+    fi
+else
+    echo "[✓] stow already installed."
+fi
+
 # install oh-my-zsh
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo "[+] Installing oh-my-zsh..."
