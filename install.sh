@@ -1,93 +1,76 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# install.sh — bootstrap these dotfiles on a fresh machine.
+#
+#   ./install.sh            run every step in order (00 -> 10 -> 20 -> 30)
+#   ./install.sh 20         run only the matching step (e.g. 20-tools)
+#   ./install.sh 20-tools   same, by full name
+#   ./install.sh --list     list available steps
+#
+# Each step is idempotent and safe to re-run.
+set -euo pipefail
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/common.sh
+source "$REPO_DIR/lib/common.sh"
+detect_platform
 
-DOT_FOLDERS="zsh,p10k,tmux,git"
+STEPS_DIR="$REPO_DIR/steps"
 
-# install stow
-if ! command -v stow >/dev/null 2>&1; then
-    echo "[+] Installing stow..."
-    if [ "$(uname)" = "Darwin" ]; then
-        brew install stow
-    elif command -v apt-get >/dev/null 2>&1; then
-        sudo apt-get update && sudo apt-get install -y stow
-    elif command -v dnf >/dev/null 2>&1; then
-        sudo dnf install -y stow
-    elif command -v pacman >/dev/null 2>&1; then
-        sudo pacman -S --noconfirm stow
+usage() {
+    sed -n '2,9p' "$REPO_DIR/install.sh" | sed 's/^# \{0,1\}//'
+}
+
+list_steps() {
+    for s in "$STEPS_DIR"/*.sh; do
+        printf '  %s\n' "$(basename "$s" .sh)"
+    done
+}
+
+# run_step <path> — execute one step in its own subshell, isolating failures.
+run_step() {
+    local file="$1" name
+    name="$(basename "$file" .sh)"
+    log "step ${name}…"
+    if bash "$file"; then
+        ok "step ${name} done"
     else
-        echo "[!] No supported package manager found. Please install stow manually."
+        local rc=$?
+        err "step ${name} failed (exit $rc)"
+        err "re-run just this step with:  ./install.sh ${name%%-*}"
+        exit "$rc"
+    fi
+}
+
+main() {
+    case "${1:-}" in
+        -h|--help) usage; exit 0 ;;
+        -l|--list) list_steps; exit 0 ;;
+    esac
+
+    if [ "$#" -eq 0 ]; then
+        log "Platform: OS=$OS PKG=$PKG"
+        for s in "$STEPS_DIR"/*.sh; do
+            run_step "$s"
+        done
+        ok "All steps complete."
+        warn "Open a new shell (or run: exec zsh -l) to load the new environment."
+        return 0
+    fi
+
+    # Run only the step(s) matching the argument by name or numeric prefix.
+    local arg="$1" matched=0 name
+    for s in "$STEPS_DIR"/*.sh; do
+        name="$(basename "$s" .sh)"
+        if [ "$name" = "$arg" ] || [ "${name%%-*}" = "$arg" ]; then
+            run_step "$s"
+            matched=1
+        fi
+    done
+    if [ "$matched" -eq 0 ]; then
+        err "No step matches '$arg'. Available steps:"
+        list_steps
         exit 1
     fi
-else
-    echo "[✓] stow already installed."
-fi
+}
 
-# install oh-my-zsh
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    echo "[+] Installing oh-my-zsh..."
-    RUNZSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-else
-    echo "[✓] oh-my-zsh already installed."
-fi
-
-# install powerlevel10k
-ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-P10K_DIR="$ZSH_CUSTOM/themes/powerlevel10k"
-
-if [ ! -d "$P10K_DIR" ]; then
-    echo "[+] Installing powerlevel10k theme..."
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$P10K_DIR"
-else
-    echo "[✓] powerlevel10k already installed."
-fi
-
-# zshrc plugin: zsh-autosuggestions and pwp
-if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
-    echo "[+] Installing zsh-autosuggestions plugin..."
-    git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
-else
-    echo "[✓] zsh-autosuggestions already installed."
-fi
-
-if [ ! -d "$ZSH_CUSTOM/plugins/pwp" ]; then
-    echo "[+] Installing pwp plugin..."
-    git clone https://github.com/ttkalcevic/pwp.git "$ZSH_CUSTOM/plugins/pwp"
-else
-    echo "[✓] pwp already installed."
-fi
-
-# Tmux Plugin Manger
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
-# install mise
-if [ ! -d "$HOME/.mise" ]; then
-    echo "[+] Installing mise..."
-    curl https://mise.run | sh
-else
-    echo "[✓] mise already installed."
-fi
-
-# stow link dotfiles
-for folder in $(echo $DOT_FOLDERS | sed "s/,/ /g"); do
-    echo "[+] Folder :: $folder"
-
-    # Back up existing real files that would conflict with stow (skip symlinks)
-    while IFS= read -r src; do
-        rel="${src#$SCRIPT_DIR/$folder/}"
-        target="$HOME/$rel"
-        if [ -e "$target" ] && [ ! -L "$target" ]; then
-            backup="${target}.backup.$(date +%Y%m%d%H%M%S)"
-            echo "[!] Backing up $target -> $backup"
-            mv "$target" "$backup"
-        fi
-    done < <(find "$SCRIPT_DIR/$folder" -type f ! -name 'README.md' ! -name 'LICENSE')
-
-    stow --ignore=README.md --ignore=LICENSE \
-        -t $HOME -D $folder
-    stow -v -t $HOME $folder
-done
-
-# Reload shell once installed
-echo "[+] Reloading shell..."
-exec $SHELL -l
+main "$@"

@@ -1,0 +1,13 @@
+# Declarative dev-tool versions, managed by mise.
+# steps/20-tools.sh symlinks this file to ~/.config/mise/config.toml and runs
+# `mise install`, so a fresh machine gets every tool below in one shot.
+[tools]
+node    = "22"        # matches the existing machine's v22 line
+python  = "3.12"
+bun     = "latest"
+neovim  = "latest"
+lazygit = "latest"
+
+[settings]
+# Respect project-level .python-version files (carried over from the prior setup).
+idiomatic_version_file_enable_tools = ["python"]

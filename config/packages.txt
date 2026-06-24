@@ -1,0 +1,11 @@
+# Core system packages installed via the OS package manager (steps/00-system.sh).
+# One package per line. Text after # is a comment. Names use the common spelling
+# that works on apt/dnf/pacman/brew; the compiler toolchain is handled per-distro
+# inside steps/00-system.sh.
+git
+curl
+zsh
+stow
+tmux
+unzip
+fontconfig
