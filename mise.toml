@@ -2,10 +2,10 @@
 # steps/20-tools.sh symlinks this file to ~/.config/mise/config.toml and runs
 # `mise install`, so a fresh machine gets every tool below in one shot.
 [tools]
-node    = "22"        # matches the existing machine's v22 line
+node    = "22"
 python  = "3.12"
 bun     = "latest"
-neovim  = "latest"
+neovim  = "0.11.5"
 lazygit = "latest"
 
 [settings]
