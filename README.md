@@ -23,8 +23,10 @@ cd ~/Github/dotfiles
 |------|------|
 | `00-system` | System packages (`config/packages.txt`) + compiler toolchain + a Nerd Font |
 | `10-shell`  | oh-my-zsh, powerlevel10k, zsh plugins, sets zsh as the default shell |
-| `20-tools`  | mise + everything in `mise.toml` (node, python, bun, neovim, lazygit) + tpm |
+| `20-tools`  | mise + everything in `mise.toml` (node, python, bun, neovim, lazygit) + tpm + clones the neovim config |
 | `30-stow`   | Backs up conflicting files, then `stow`s `zsh/p10k/tmux/git` into `$HOME` |
+
+`20-tools` also clones the Neovim config (a standalone [kickstart.nvim](https://github.com/keepgoing-228/kickstart.nvim) fork) into `~/.config/nvim` if absent. It stays its own git repo; lazy.nvim installs the plugins (latest, since `lazy-lock.json` isn't pinned) on first launch.
 
 ## Usage
 

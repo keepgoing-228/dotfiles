@@ -47,3 +47,16 @@ else
     log "Installing tpm…"
     git clone --depth=1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
 fi
+
+# --- 5. neovim config (standalone kickstart fork) ---
+# Full clone (no --depth) so it stays a real repo you can commit/push.
+# lazy.nvim installs the plugins on first launch.
+NVIM_CONFIG_REPO="https://github.com/keepgoing-228/kickstart.nvim.git"
+NVIM_CONFIG_DIR="$HOME/.config/nvim"
+if [ -e "$NVIM_CONFIG_DIR" ]; then
+    ok "nvim config already present ($NVIM_CONFIG_DIR)"
+else
+    log "Cloning neovim config…"
+    mkdir -p "$(dirname "$NVIM_CONFIG_DIR")"
+    git clone "$NVIM_CONFIG_REPO" "$NVIM_CONFIG_DIR"
+fi
