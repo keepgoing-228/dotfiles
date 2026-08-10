@@ -65,6 +65,21 @@ pkg_update_once() {
     _PKG_UPDATED=1
 }
 
+# pkg_available <pkg> — does the detected package manager offer this package?
+# Lets a step prefer the packaged build and fall back to something else (e.g. a
+# source build) only on releases that lack it.
+pkg_available() {
+    case "$PKG" in
+        # No output at all for unknown packages, "Candidate: (none)" when the
+        # package is known but uninstallable — [^(] rejects both.
+        apt)    apt-cache policy "$1" 2>/dev/null | grep -q 'Candidate: [^(]' ;;
+        dnf)    dnf -q list --available "$1" >/dev/null 2>&1 ;;
+        pacman) pacman -Si "$1" >/dev/null 2>&1 ;;
+        brew)   brew info --formula "$1" >/dev/null 2>&1 ;;
+        *)      return 1 ;;
+    esac
+}
+
 # ensure_pkg <pkg...> — install system packages via the detected manager.
 ensure_pkg() {
     if [ "$#" -eq 0 ]; then return 0; fi
