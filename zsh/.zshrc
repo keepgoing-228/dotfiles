@@ -128,3 +128,9 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
+
+# go
+export PATH="$PATH:/usr/local/go/bin"
+
+# rust
+export PATH="$HOME/.cargo/bin:$PATH"
