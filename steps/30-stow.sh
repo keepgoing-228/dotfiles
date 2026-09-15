@@ -7,7 +7,7 @@ REPO_DIR="$(cd "$STEP_DIR/.." && pwd)"
 source "$REPO_DIR/lib/common.sh"
 detect_platform
 
-DOT_FOLDERS="zsh,p10k,tmux,git"
+DOT_FOLDERS="zsh,p10k,tmux,git,claude"
 
 for folder in ${DOT_FOLDERS//,/ }; do
     log "stow :: $folder"

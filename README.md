@@ -24,7 +24,7 @@ cd ~/Github/dotfiles
 | `00-system` | System packages (`config/packages.txt`) + compiler toolchain + a Nerd Font |
 | `10-shell`  | oh-my-zsh, powerlevel10k, zsh plugins, sets zsh as the default shell |
 | `20-tools`  | mise + everything in `mise.toml` (node, python, bun, neovim, lazygit) + tpm + clones the neovim config |
-| `30-stow`   | Backs up conflicting files, then `stow`s `zsh/p10k/tmux/git` into `$HOME` |
+| `30-stow`   | Backs up conflicting files, then `stow`s `zsh/p10k/tmux/git/claude` into `$HOME` |
 | `40-keyd`   | Installs keyd (package if the distro has one, source build otherwise), links `keyd/default.conf` into `/etc/keyd/`, enables the service. Linux only |
 
 `20-tools` also clones the Neovim config (a standalone [kickstart.nvim](https://github.com/keepgoing-228/kickstart.nvim) fork) into `~/.config/nvim` if absent. It stays its own git repo; lazy.nvim installs the plugins (latest, since `lazy-lock.json` isn't pinned) on first launch.
@@ -45,7 +45,7 @@ lib/common.sh         # logging, OS/package-manager detection, ensure_pkg()
 steps/                # 00-system, 10-shell, 20-tools, 30-stow, 40-keyd
 config/packages.txt   # declarative system package list
 mise.toml             # declarative dev-tool versions
-zsh/ p10k/ tmux/ git/ # stow packages
+zsh/ p10k/ tmux/ git/ claude/ # stow packages
 keyd/default.conf     # symlinked to /etc/keyd/ (not a stow package)
 ```
 
